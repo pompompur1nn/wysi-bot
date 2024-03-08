@@ -1,6 +1,6 @@
 import discord
 import asyncio
-import pytz  # Added import for pytz
+import pytz
 from datetime import datetime, timezone, timedelta
 
 # Define all intents
@@ -10,11 +10,14 @@ intents = discord.Intents.all()
 client = discord.Client(intents=intents)
 
 # Your Discord bot token
-TOKEN = 'enter yo token lols'
+TOKEN = ''
 
 # The time to ping (in 24-hour format)
 target_hour = 7
 target_minute = 27
+
+# ID of the channel where the bot will send messages
+channel_id = 1102288754607136786  # Replace this with your desired channel ID
 
 @client.event
 async def on_ready():
@@ -38,15 +41,19 @@ async def ping_role_at_target_time():
 
             # Check if it's the target time
             if current_time_target.hour == target_hour and current_time_target.minute == target_minute:
-                # Fetch the guild (replace YOUR_GUILD_ID_HERE with your guild ID)
-                guild = client.get_guild(YOUR_GUILD_ID_HERE)
+                # Fetch the guild
+                guild = client.get_guild(1102288753164296233)
 
-                # Fetch the role to ping (replace YOUR_ROLE_NAME_HERE with your role name)
-                role = discord.utils.get(guild.roles, name='YOUR_ROLE_NAME_HERE')
+                # Fetch the role to ping
+                role = discord.utils.get(guild.roles, name='dead chat moment')
 
-                # Ping the role in a specific channel (replace YOUR_CHANNEL_ID_HERE with your channel ID)
-                channel = guild.get_channel(YOUR_CHANNEL_ID_HERE)
-                await channel.send(f"{role.mention}, it's {current_time_target.strftime('%I:%M %p')} in {timezone_str}!")
+                # Fetch the channel to send the message
+                channel = client.get_channel(channel_id)
+
+                if channel:
+                    await channel.send(f"{role.mention}, it's {current_time_target.strftime('%I:%M %p')} somewhere in the world! WYSI!!!!")
+                else:
+                    print("Channel not found!")
 
                 # Sleep to avoid spamming the channel
                 await asyncio.sleep(60)  # Sleep for a minute
@@ -55,8 +62,8 @@ async def ping_role_at_target_time():
         await asyncio.sleep(1)
 
 def get_timezone_offset(timezone_str):
-    # Get the timezone offset in hours
-    return int(timezone(timedelta(0), timezone(timezone_str)).utcoffset().total_seconds() / 3600)
-
+  # Get the timezone offset in hours
+  tz = pytz.timezone(timezone_str)
+  return int(tz.utcoffset(datetime.utcnow()).total_seconds() / 3600)
 # Run the bot
 client.run(TOKEN)
